@@ -1,4 +1,5 @@
 #pragma once
+#include "ui/shaders/shaders.h"
 #include <clients/client.h>
 
 #include <memory>
@@ -21,4 +22,7 @@ class ImGuiLayer {
   std::vector<Game> games_;
   std::unique_ptr<ui::PanelManager> panel_manager_;
   bool initialized_ = false;
+  Shader shaders_;
 };
+
+void DrawMainMenuBg(const ImGuiViewport* viewport, ImGuiStyle &style);

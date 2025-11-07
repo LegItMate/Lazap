@@ -1,14 +1,17 @@
-#include <imgui_internal.h>
+#include "glad/glad.h"
+#include <GLFW/glfw3.h>
+#include "ui/shaders/shaders.h"
 #include <imgui_layer.h>
+#include <imgui_internal.h>
 #include <utils/launch_manager.h>
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
-#include "imgui.h"
 #include "ui/panel_manager.h"
 #include "ui/themes/themes.h"
 #include "utils/font_manager.h"
 #include "utils/icon_manager.h"
+#include "imgui.h"
 
 void ImGuiLayer::init(GLFWwindow *window) {
   IMGUI_CHECKVERSION();
@@ -39,6 +42,10 @@ void ImGuiLayer::init(GLFWwindow *window) {
 
   panel_manager_ = std::make_unique<ui::PanelManager>();
   panel_manager_->initPanels(window);
+
+  shaders_ = Shader();
+  Shader::blurShadowProgram = Shader::CreateShaderProgram("src/ui/shaders/blur.vert", "src/ui/shaders/blur.frag");
+  Shader::quadVAO = Shader::InitFullscreenQuad();
 }
 
 void ImGuiLayer::begin() {
@@ -63,24 +70,21 @@ void ImGuiLayer::begin() {
   style.WindowPadding = ImVec2(2.0f, 2.0f);
   ImGui::Begin("HostWindow", nullptr, host_flags);
   Themes::setDefaultDarkColors();
+  ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
   if (initialized_ == false) {
     initialized_ = true;
     panel_manager_->view_->MainMenu();
   }
 
-  ImDrawList *bg = ImGui::GetWindowDrawList();
-  float gameInfoY = viewport->Size.y * .43f;
-  ImVec2 img_pos = ImVec2(0.0f, 0.0f);
-  ImVec2 img_size = ImVec2((float)viewport->Size.x, gameInfoY);
-  bg->AddImage((ImTextureID)(intptr_t)IconManager::GetIcon("banner"), img_pos,
-               img_size, ImVec2(0, 0), ImVec2(1, 1), IM_COL32_WHITE);
-  bg->AddRectFilledMultiColor(img_pos, img_size, IM_COL32(0, 0, 0, 0),
-                              IM_COL32(0, 0, 0, 0), IM_COL32(0, 0, 0, 255),
-                              IM_COL32(0, 0, 0, 255));
-  style.Colors[ImGuiCol_WindowBg].w = 0.0f;
+  glBindFramebuffer(GL_FRAMEBUFFER, shaders_.sceneFBO);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  if (panel_manager_->view_->view == ui::ViewType::MainMenu) {
+    DrawMainMenuBg(viewport, style);
+  }
 
   ImGui::DockSpace(ImGui::GetID("MainDockSpace"), ImVec2(0.0f, 0.0f),
                    ImGuiDockNodeFlags_None, nullptr);
+  ImGui::PopStyleColor();
   ImGui::End();
 }
 
@@ -96,6 +100,9 @@ void ImGuiLayer::render() {
 }
 
 void ImGuiLayer::end() {
+  shaders_.ApplyBlur(Shader::blurShadowProgram, Shader::quadVAO);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -115,4 +122,17 @@ void ImGuiLayer::shutdown() {
 void ImGuiLayer::setGames(std::vector<Game> games) {
   games_ = std::move(games);
   panel_manager_->setGames(&games_);
+}
+
+void DrawMainMenuBg(const ImGuiViewport *viewport, ImGuiStyle &style) {
+  ImDrawList *bg = ImGui::GetWindowDrawList();
+  float gameInfoY = viewport->Size.y * .43f;
+  ImVec2 img_pos = ImVec2(0.0f, 0.0f);
+  ImVec2 img_size = ImVec2((float)viewport->Size.x, gameInfoY);
+  bg->AddImage((ImTextureID)(intptr_t)IconManager::GetIcon("banner"), img_pos,
+               img_size, ImVec2(0, 0), ImVec2(1, 1), IM_COL32_WHITE);
+  bg->AddRectFilledMultiColor(img_pos, img_size, IM_COL32(0, 0, 0, 0),
+                              IM_COL32(0, 0, 0, 0), IM_COL32(0, 0, 0, 255),
+                              IM_COL32(0, 0, 0, 255));
+  style.Colors[ImGuiCol_WindowBg].w = 0.0f;
 }

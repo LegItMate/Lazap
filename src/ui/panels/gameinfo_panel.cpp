@@ -1,5 +1,5 @@
 // clang-format off
-#include "GL/glew.h"
+#include "glad/glad.h"
 #include "ui/panels/gameinfo_panel.h"
 // clang-format on
 #include "imgui.h"

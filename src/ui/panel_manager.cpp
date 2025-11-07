@@ -2,6 +2,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <GLFW/glfw3.h>
 
 #include "ui/panels/game_panel.h"
 #include "ui/panels/gameinfo_panel.h"

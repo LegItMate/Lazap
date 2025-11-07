@@ -1,13 +1,15 @@
+#include "glad/glad.h"
+#include <GLFW/glfw3.h>
+#include <imgui_layer.h>
 #include <application.h>
 #include <clients/epic_games.h>
 #include <clients/steam/steam.h>
 #include <clients/ubisoft_connect.h>
-#include <imgui_layer.h>
 
 #include <memory>
 #include <vector>
 
-#include "GL/glew.h"
+#define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 #include "addons/discord_rpc/discord_rpc.h"
 #include "utils/icon_manager.h"
@@ -50,7 +52,9 @@ void Application::run() {
   GLFWwindow *window = glfwCreateWindow(1779, 979, "Lazap", nullptr, nullptr);
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
-  glewInit();
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    fprintf(stderr, "Failed to initialize GLAD");
+  }
 
   ImGuiLayer imgui;
   imgui.init(window);

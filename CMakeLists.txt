@@ -6,13 +6,6 @@ project(Lazap)
 include(FetchContent)
 
 FetchContent_Declare(
-        glew
-        GIT_REPOSITORY https://github.com/Perlmint/glew-cmake.git
-        GIT_TAG glew-cmake-2.2.0
-        GIT_SHALLOW TRUE
-)
-
-FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw
         GIT_TAG 3.4
@@ -39,13 +32,11 @@ FetchContent_Declare(
         GIT_SHALLOW TRUE
 )
 
-
-FetchContent_MakeAvailable(glew glfw glaze imgui stb)
+FetchContent_MakeAvailable(glfw glaze imgui stb)
 
 # FetchContent_Declare() normally supports EXCLUDE_FROM_ALL but apparently there is a bug
 # See https://gitlab.kitware.com/cmake/cmake/-/issues/20167
 # As a workaround, we exclude the directories manually
-set_property(DIRECTORY ${glew_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL YES)
 set_property(DIRECTORY ${glfw_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL YES)
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -58,6 +49,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #-----------------------------------------------------------------------------------------------------------------------
 # generate the compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Add glad
+add_library(glad external/glad/src/glad.c)
+target_include_directories(glad PUBLIC external/glad/include)
 
 # Create executable
 set(EXECUTABLE_NAME ${PROJECT_NAME})
@@ -89,12 +85,6 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             )
 endif()
 
-# Add a define to use the static version of Glew
-target_compile_definitions(${EXECUTABLE_NAME}
-        PRIVATE
-        GLEW_STATIC
-        )
-
 # Set the include path
 target_include_directories(${EXECUTABLE_NAME}
         PRIVATE
@@ -106,12 +96,18 @@ target_include_directories(${EXECUTABLE_NAME}
         ${stb_SOURCE_DIR}/
         ${PROJECT_SOURCE_DIR}/include)
 
+target_include_directories(${EXECUTABLE_NAME}
+        PRIVATE
+        ${glad_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/include
+        )
+
 # Link against the appropriate libraries
 target_link_libraries(${EXECUTABLE_NAME}
         PRIVATE
         glfw
         glaze::glaze
-        libglew_static
+        glad
         $<$<AND:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Windows>>:opengl32.a>
         $<$<CXX_COMPILER_ID:MSVC>:opengl32.lib>
         )
@@ -120,4 +116,10 @@ target_link_libraries(${EXECUTABLE_NAME}
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/src/assets
+)
+
+# Add shaders folder to the build
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/ui/shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/src/ui/shaders
 )

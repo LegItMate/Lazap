@@ -1,5 +1,5 @@
 // clang-format off
-#include "GL/glew.h"
+#include "glad/glad.h"
 #include "utils/icon_manager.h"
 // clang-format on
 
