@@ -78,24 +78,81 @@ void Application::run() {
   discord::RichPresence::Initialize("932504287337148417");
   discord::RichPresence::UpdatePresence("Lazap", "In Main Menu");
 
-  printf("Startup took: %ld ms\n",
+  printf("Startup took: %lld ms\n",
          std::chrono::duration_cast<std::chrono::milliseconds>(
              std::chrono::high_resolution_clock::now() - startupBegin)
              .count());
 
+  //crap code starts here
+  int display_w, display_h;
+  Shader::InitFullscreenQuad();
+  Shader::InitBlurBuffers(display_w, display_h);
+  GLuint blurProgram = Shader::CreateShaderProgram("src/ui/shaders/blur.vert","src/ui/shaders/blur.frag");
+  GLuint compositeProgram = Shader::CreateShaderProgram("src/ui/shaders/blur.vert","src/ui/shaders/composite.frag");
+
+  GLuint bgTex;
+  glGenTextures(1, &bgTex);
+  glBindTexture(GL_TEXTURE_2D, bgTex);
+  unsigned char pixel[] = { 90,110,150, 110,130,170, 90,110,150, 110,130,170 };
+  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,2,2,0,GL_RGB,GL_UNSIGNED_BYTE,pixel);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  // enable blending once
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
   RunnerState runner;
   while (!glfwWindowShouldClose(window)) {
-    IdleBySleeping(runner.fpsIdling);
+
     glfwPollEvents();
-    int display_w, display_h;
-    glfwGetFramebufferSize(window, &display_w, &display_h);
-    glViewport(0, 0, display_w, display_h);
-    glClearColor(0.f, 0.f, 0.f, 0.f);
+  glfwGetFramebufferSize(window, &display_w, &display_h);
+  glViewport(0,0,display_w,display_h);
+
+  // Render background into sceneFBO
+  glBindFramebuffer(GL_FRAMEBUFFER, Shader::sceneFBO);
+  glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT);
-    imgui.begin();
-    imgui.render();
-    imgui.end();
-    glfwSwapBuffers(window);
+  // draw fullscreen quad with background texture:
+  glUseProgram(blurProgram);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, bgTex);
+  glUniform1i(glGetUniformLocation(blurProgram,"image"), 0);
+  glBindVertexArray(Shader::quadVAO);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  // Blur: input = sceneColorTex. ApplyBlur will ping-pong into blurColorTex.
+  glUseProgram(blurProgram);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, Shader::sceneColorTex);
+  glUniform1i(glGetUniformLocation(blurProgram,"image"), 0);
+  Shader::ApplyBlur(blurProgram, Shader::quadVAO);
+
+  GLuint finalBlurTex = Shader::blurColorTex[0];
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClearColor(0,0,0,0); glClear(GL_COLOR_BUFFER_BIT);
+  glUseProgram(compositeProgram);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, finalBlurTex);
+  glUniform1i(glGetUniformLocation(compositeProgram,"blurTex"), 0);
+
+  float titlePx = 48.0f;
+  glUniform2f(glGetUniformLocation(compositeProgram,"titlebarRectMin"), 0.0f, 0.0f);
+  glUniform2f(glGetUniformLocation(compositeProgram,"titlebarRectMax"), 1.0f, titlePx / (float)display_h);
+  glUniform4f(glGetUniformLocation(compositeProgram,"tintColor"), 1.0f, 1.0f, 1.0f, 0.65f);
+  glBindVertexArray(Shader::quadVAO);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    // crap code ends here
+
+  imgui.begin();
+  imgui.render();
+  imgui.end();
+
+  glfwSwapBuffers(window);
   }
 
   discord::RichPresence::Shutdown();

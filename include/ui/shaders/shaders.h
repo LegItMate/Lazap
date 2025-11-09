@@ -10,8 +10,8 @@ class Shader {
 	static GLuint blurShadowProgram;
 	static GLuint quadVAO;
 	static GLuint quadVBO;
-	void InitBlurBuffers(int width, int height);
-	void ApplyBlur(GLuint shader, GLuint quadVAO);
+	static void InitBlurBuffers(int width, int height);
+	static void ApplyBlur(GLuint shader, GLuint quadVAO);
 	static GLuint CreateShaderProgram(const char* vertexPath, const char* fragmentPath);
 	static GLuint InitFullscreenQuad();
 };

@@ -44,9 +44,12 @@ void Shader::InitBlurBuffers(int width, int height) {
 
 void Shader::ApplyBlur(GLuint shader, GLuint quadVAO) {
   bool horizontal = true, first_iteration = true;
-  int amount = 8;  // blur strength
+  int amount = 8;  // blur passes
+  float blurIntensity = 3.0f; // tweak this value
 
   glUseProgram(shader);
+  glUniform1f(glGetUniformLocation(shader, "intensity"), blurIntensity);
+
   for (int i = 0; i < amount; i++) {
     glBindFramebuffer(GL_FRAMEBUFFER, blurFBO[horizontal]);
     glUniform1i(glGetUniformLocation(shader, "horizontal"), horizontal);
@@ -59,6 +62,7 @@ void Shader::ApplyBlur(GLuint shader, GLuint quadVAO) {
   }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
 
 GLuint Shader::CreateShaderProgram(const char* vertexPath, const char* fragmentPath)
 {
