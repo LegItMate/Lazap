@@ -112,14 +112,19 @@ if (WIN32)
     libidn2-0.dll
     libpsl-5.dll
   )
-
-  foreach(dll ${MINGW_DLLS})
+foreach(dll ${MINGW_DLLS})
+  if(EXISTS "${MINGW_DLL_DIR}/${dll}")
     add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${MINGW_DLL_DIR}/${dll}"
         "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>"
     )
-  endforeach()
+  else()
+    message(STATUS "Skipping missing DLL: ${dll}")
+  endif()
+endforeach()
+file(GLOB _mingw_dlls "${MINGW_DLL_DIR}/*.dll")
+message(STATUS "MINGW DLLs: ${_mingw_dlls}")
 endif()
 
 #-----------------------------------------------------------------------------------------------------------------------
