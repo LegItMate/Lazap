@@ -21,7 +21,6 @@ set(LUNASVG_INSTALL OFF CACHE BOOL "" FORCE)
 set(CPR_INSTALL OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries only")
 set(CPR_BUILD_TESTS OFF CACHE BOOL "Disable tests")
-set()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   set(B_PRODUCTION_MODE ON CACHE BOOL "Strip all development features such as hot-reload and absolute filepaths" FORCE)
