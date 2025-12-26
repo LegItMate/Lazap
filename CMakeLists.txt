@@ -94,39 +94,6 @@ add_executable(${EXECUTABLE_NAME}
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
-if (WIN32)
-  get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
-  get_filename_component(MINGW_ROOT ${MINGW_BIN_DIR} DIRECTORY)
-
-  set(MINGW_DLL_DIR "${MINGW_ROOT}/bin")
-
-  set(MINGW_DLLS
-    libbrotlidec.dll
-    libgcc_s_seh-1.dll
-    libidn2-0.dll
-    libnghttp2-14.dll
-    libpsl-5.dll
-    libwinpthread-1.dll
-    libssh2-1.dll
-    libstdc++-6.dll
-    libzstd.dll
-    zlib1.dll
-  )
-foreach(dll ${MINGW_DLLS})
-  if(EXISTS "${MINGW_DLL_DIR}/${dll}")
-    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${MINGW_DLL_DIR}/${dll}"
-        ${CMAKE_BINARY_DIR}
-    )
-  else()
-    message(STATUS "Skipping missing DLL: ${dll}")
-  endif()
-endforeach()
-file(GLOB _mingw_dlls "${MINGW_DLL_DIR}/*.dll")
-message(STATUS "MINGW DLLs: ${_mingw_dlls}")
-endif()
-
 #-----------------------------------------------------------------------------------------------------------------------
 # Resources & Embedding
 #-----------------------------------------------------------------------------------------------------------------------
@@ -221,17 +188,21 @@ if(WIN32)
         RUNTIME DESTINATION .
         COMPONENT "${PROJECT_NAME}App"
   )
+
+  get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
+  get_filename_component(MINGW_ROOT ${MINGW_BIN_DIR} DIRECTORY)
+  set(MINGW_DLL_DIR "${MINGW_ROOT}/bin")
   install(FILES
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libgcc_s_seh-1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libstdc++-6.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libwinpthread-1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libzstd.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libssh2-1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libbrotlidec.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/zlib1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libnghttp2-14.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libidn2-0.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libpsl-5.dll
+    ${MINGW_DLL_DIR}/libgcc_s_seh-1.dll
+    ${MINGW_DLL_DIR}/libstdc++-6.dll
+    ${MINGW_DLL_DIR}/libwinpthread-1.dll
+    ${MINGW_DLL_DIR}/libzstd.dll
+    ${MINGW_DLL_DIR}/libssh2-1.dll
+    ${MINGW_DLL_DIR}/libbrotlidec.dll
+    ${MINGW_DLL_DIR}/zlib1.dll
+    ${MINGW_DLL_DIR}/libnghttp2-14.dll
+    ${MINGW_DLL_DIR}/libidn2-0.dll
+    ${MINGW_DLL_DIR}/libpsl-5.dll
     DESTINATION .
   )
 
