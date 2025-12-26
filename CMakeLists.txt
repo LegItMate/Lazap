@@ -183,25 +183,27 @@ if(WIN32)
   get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
   get_filename_component(MINGW_ROOT ${MINGW_BIN_DIR} DIRECTORY)
   set(MINGW_DLL_DIR "${MINGW_ROOT}/bin")
-  set(RUNTIME_DLLS
+  set(MINGW_DLLS
     libgcc_s_seh-1.dll
     libstdc++-6.dll
     libwinpthread-1.dll
-    libzstd.dll
-    libssh2-1.dll
-    libbrotlidec.dll
+    libcurl-4.dll
+    libssl-3.dll
+    libcrypto-3.dll
     zlib1.dll
-    libnghttp2-14.dll
+    nghttp2-14.dll
     libidn2-0.dll
     libpsl-5.dll
   )
-  foreach(dll ${RUNTIME_DLLS})
-    add_custom_command(TARGET Lazap POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${MINGW_BIN_DIR}/${dll}"
-        "$<TARGET_FILE_DIR:${}>"
+
+  foreach(dll ${MINGW_DLLS})
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${MINGW_BIN}/${dll}"
+        "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>"
     )
   endforeach()
+endif()
 
 
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
