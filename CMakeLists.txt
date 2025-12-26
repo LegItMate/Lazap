@@ -101,16 +101,16 @@ if (WIN32)
   set(MINGW_DLL_DIR "${MINGW_ROOT}/bin")
 
   set(MINGW_DLLS
+    libbrotlidec.dll
     libgcc_s_seh-1.dll
-    libstdc++-6.dll
-    libwinpthread-1.dll
-    libcurl-4.dll
-    libssl-3.dll
-    libcrypto-3.dll
-    zlib1.dll
-    nghttp2-14.dll
     libidn2-0.dll
+    libnghttp2-14.dll
     libpsl-5.dll
+    libwinpthread-1.dll
+    libssh2-1.dll
+    libstdc++-6.dll
+    libzstd.dll
+    zlib1.dll
   )
 foreach(dll ${MINGW_DLLS})
   if(EXISTS "${MINGW_DLL_DIR}/${dll}")
