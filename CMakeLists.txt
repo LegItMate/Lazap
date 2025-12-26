@@ -214,7 +214,7 @@ set(CPACK_SYSTEM_NAME "${ARCH}")
 
 if(WIN32)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-  file(GLOB copied_dlls "${MINGW_DLL_DIR}/*.dll")
+  file(GLOB copied_dlls "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dll")
   message(STATUS "MINGW DLLs: ${copied_dlls}")
   message(STATUS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   install(TARGETS ${EXECUTABLE_NAME}
