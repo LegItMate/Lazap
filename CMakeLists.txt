@@ -187,11 +187,11 @@ if(WIN32)
     libgcc_s_seh-1.dll
     libstdc++-6.dll
     libwinpthread-1.dll
-    libcurl-4.dll
-    libssl-3.dll
-    libcrypto-3.dll
+    libzstd.dll
+    libssh2-1.dll
+    libbrotlidec.dll
     zlib1.dll
-    nghttp2-14.dll
+    libnghttp2-14.dll
     libidn2-0.dll
     libpsl-5.dll
   )
