@@ -203,8 +203,6 @@ if(WIN32)
         "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>"
     )
   endforeach()
-endif()
-
 
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
   file(GLOB copied_dlls "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*")
