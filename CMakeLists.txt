@@ -199,7 +199,7 @@ if(WIN32)
     add_custom_command(TARGET Lazap POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${MINGW_BIN_DIR}/${dll}"
-        "$<TARGET_FILE_DIR:Lazap>"
+        "$<TARGET_FILE_DIR:${}>"
     )
   endforeach()
 
@@ -214,16 +214,16 @@ if(WIN32)
   )
 
   install(FILES
-    ${MINGW_DLL_DIR}/libgcc_s_seh-1.dll
-    ${MINGW_DLL_DIR}/libstdc++-6.dll
-    ${MINGW_DLL_DIR}/libwinpthread-1.dll
-    ${MINGW_DLL_DIR}/libzstd.dll
-    ${MINGW_DLL_DIR}/libssh2-1.dll
-    ${MINGW_DLL_DIR}/libbrotlidec.dll
-    ${MINGW_DLL_DIR}/zlib1.dll
-    ${MINGW_DLL_DIR}/libnghttp2-14.dll
-    ${MINGW_DLL_DIR}/libidn2-0.dll
-    ${MINGW_DLL_DIR}/libpsl-5.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libgcc_s_seh-1.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libstdc++-6.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libwinpthread-1.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libzstd.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libssh2-1.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libbrotlidec.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/zlib1.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libnghttp2-14.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libidn2-0.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libpsl-5.dll
     DESTINATION .
   )
 
