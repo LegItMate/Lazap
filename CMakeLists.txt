@@ -180,8 +180,32 @@ endif()
 set(CPACK_SYSTEM_NAME "${ARCH}")
 
 if(WIN32)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-  file(GLOB copied_dlls "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dll")
+  get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
+  get_filename_component(MINGW_ROOT ${MINGW_BIN_DIR} DIRECTORY)
+  set(MINGW_DLL_DIR "${MINGW_ROOT}/bin")
+  set(RUNTIME_DLLS
+    libgcc_s_seh-1.dll
+    libstdc++-6.dll
+    libwinpthread-1.dll
+    libzstd.dll
+    libssh2-1.dll
+    libbrotlidec.dll
+    zlib1.dll
+    libnghttp2-14.dll
+    libidn2-0.dll
+    libpsl-5.dll
+  )
+  foreach(dll ${RUNTIME_DLLS})
+    add_custom_command(TARGET Lazap POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${MINGW_BIN_DIR}/${dll}"
+        "$<TARGET_FILE_DIR:Lazap>"
+    )
+  endforeach()
+
+
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  file(GLOB copied_dlls "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*")
   message(STATUS "MINGW DLLs: ${copied_dlls}")
   message(STATUS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   install(TARGETS ${EXECUTABLE_NAME}
@@ -189,9 +213,6 @@ if(WIN32)
         COMPONENT "${PROJECT_NAME}App"
   )
 
-  get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
-  get_filename_component(MINGW_ROOT ${MINGW_BIN_DIR} DIRECTORY)
-  set(MINGW_DLL_DIR "${MINGW_ROOT}/bin")
   install(FILES
     ${MINGW_DLL_DIR}/libgcc_s_seh-1.dll
     ${MINGW_DLL_DIR}/libstdc++-6.dll
