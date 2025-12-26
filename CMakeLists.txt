@@ -21,6 +21,7 @@ set(LUNASVG_INSTALL OFF CACHE BOOL "" FORCE)
 set(CPR_INSTALL OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries only")
 set(CPR_BUILD_TESTS OFF CACHE BOOL "Disable tests")
+set()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   set(B_PRODUCTION_MODE ON CACHE BOOL "Strip all development features such as hot-reload and absolute filepaths" FORCE)
@@ -93,6 +94,31 @@ add_executable(${EXECUTABLE_NAME}
     ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
+
+if (WIN32)
+  set(MINGW_BIN "C:/msys64/mingw64/bin")
+
+  set(MINGW_DLLS
+    libgcc_s_seh-1.dll
+    libstdc++-6.dll
+    libwinpthread-1.dll
+    libcurl-4.dll
+    libssl-3.dll
+    libcrypto-3.dll
+    zlib1.dll
+    nghttp2-14.dll
+    libidn2-0.dll
+    libpsl-5.dll
+  )
+
+  foreach(dll ${MINGW_DLLS})
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${MINGW_BIN}/${dll}"
+        "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>"
+    )
+  endforeach()
+endif()
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Resources & Embedding
@@ -180,10 +206,23 @@ endif()
 set(CPACK_SYSTEM_NAME "${ARCH}")
 
 if(WIN32)
+  install(FILES
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libgcc_s_seh-1.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libstdc++-6.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libwinpthread-1.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libcurl-4.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libssl-3.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libcrypto-3.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/zlib1.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nghttp2-14.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libidn2-0.dll
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libpsl-5.dll
+    DESTINATION .
+  )
   install(TARGETS ${EXECUTABLE_NAME}
         RUNTIME DESTINATION .
         COMPONENT "${PROJECT_NAME}App"
-    )
+  )
 
   set(CPACK_GENERATOR "WIX")
   set(CPACK_WIX_UPGRADE_GUID "9A72C574-EA60-495B-B6AE-64279086CA62")
