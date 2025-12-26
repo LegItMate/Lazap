@@ -214,16 +214,16 @@ set(CPACK_SYSTEM_NAME "${ARCH}")
 
 if(WIN32)
   install(FILES
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libgcc_s_seh-1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libstdc++-6.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libwinpthread-1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libcurl-4.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libssl-3.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libcrypto-3.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/zlib1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nghttp2-14.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libidn2-0.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libpsl-5.dll
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libgcc_s_seh-1.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libstdc++-6.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libwinpthread-1.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libzstd.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libssh2-1.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libbrotlidec.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/zlib1.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libnghttp2-14.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libidn2-0.dll"
+    "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/libpsl-5.dll"
     DESTINATION .
   )
   install(TARGETS ${EXECUTABLE_NAME}
