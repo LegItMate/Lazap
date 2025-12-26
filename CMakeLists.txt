@@ -117,7 +117,7 @@ foreach(dll ${MINGW_DLLS})
     add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${MINGW_DLL_DIR}/${dll}"
-        "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>"
+        ${CMAKE_BINARY_DIR}
     )
   else()
     message(STATUS "Skipping missing DLL: ${dll}")
