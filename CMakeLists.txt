@@ -124,6 +124,12 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_compile_options(${EXECUTABLE_NAME} PRIVATE -Wall -Wextra -pedantic)
 endif()
+if (MSVC)
+  target_compile_options(${EXECUTABLE_NAME} PRIVATE
+    /Zm300
+    /bigobj
+  )
+endif()
 
 set(GLAD_DIR "${CMAKE_SOURCE_DIR}/vendor/glad")
 add_library(glad STATIC "${GLAD_DIR}/src/glad.c")
