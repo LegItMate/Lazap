@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <iostream>
 #include <regex>
+#include <map>
 
 #include "clients/client.h"
 
