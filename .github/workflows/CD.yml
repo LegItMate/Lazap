@@ -77,6 +77,15 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_C_COMPILER=cl
           -DCMAKE_CXX_COMPILER=cl
+      - name: Setup Python
+        if: matrix.os == 'windows-latest'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Meson
+        if: matrix.os == 'windows-latest'
+        run: pip install meson
 
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
