@@ -188,51 +188,9 @@ endif()
 set(CPACK_SYSTEM_NAME "${ARCH}")
 
 if(WIN32)
-  get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
-  get_filename_component(MINGW_ROOT ${MINGW_BIN_DIR} DIRECTORY)
-  set(MINGW_DLL_DIR "${MINGW_ROOT}/bin")
-  set(MINGW_DLLS
-    libgcc_s_seh-1.dll
-    libstdc++-6.dll
-    libwinpthread-1.dll
-    libzstd.dll
-    libssh2-1.dll
-    libbrotlidec.dll
-    zlib1.dll
-    libnghttp2-14.dll
-    libidn2-0.dll
-    libpsl-5.dll
-  )
-
-  foreach(dll ${MINGW_DLLS})
-    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${MINGW_DLL_DIR}/${dll}"
-        "$<TARGET_FILE_DIR:${EXECUTABLE_NAME}>"
-    )
-  endforeach()
-
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-  file(GLOB copied_dlls "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*")
-  message(STATUS "MINGW DLLs: ${copied_dlls}")
-  message(STATUS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   install(TARGETS ${EXECUTABLE_NAME}
         RUNTIME DESTINATION .
         COMPONENT "${PROJECT_NAME}App"
-  )
-
-  install(FILES
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libgcc_s_seh-1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libstdc++-6.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libwinpthread-1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libzstd.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libssh2-1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libbrotlidec.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/zlib1.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libnghttp2-14.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libidn2-0.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libpsl-5.dll
-    DESTINATION .
   )
 
   set(CPACK_GENERATOR "WIX")
