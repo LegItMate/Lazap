@@ -60,7 +60,9 @@ jobs:
       
       - name: Setup MSVC
         if: matrix.os == 'windows-latest'
-        uses: ilammy/setup-msvc-dev@v1
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with: 
+          arch: x64
 
       - name: Configure (Linux)
         if: matrix.os == 'ubuntu-latest'
