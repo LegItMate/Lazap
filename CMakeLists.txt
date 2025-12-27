@@ -116,11 +116,9 @@ endforeach()
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Get rid of extra terminal window in release build (Windows)
-if (WIN32 AND NOT MSVC)
-  set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-      WIN32_EXECUTABLE $<CONFIG:Release>
-  )
-endif()
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES
+  WIN32_EXECUTABLE $<CONFIG:Release>
+)
 
 # Compiler Warnings
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
