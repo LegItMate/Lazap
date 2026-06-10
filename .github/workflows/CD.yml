@@ -89,16 +89,14 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          # Ensure we use the exact path to the toolchain
           $vcpkgToolchain = "$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
           
-          # Run cmake with proper path syntax
           cmake -B build -G Ninja `
-            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo `
             -DCMAKE_C_COMPILER=cl `
             -DCMAKE_CXX_COMPILER=cl `
             -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
-            -DCMAKE_CXX_FLAGS_RELEASE="/Od"
+            -DCMAKE_CXX_FLAGS="/fp:precise"
 
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
