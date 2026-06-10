@@ -87,13 +87,17 @@ jobs:
       
       - name: Configure (Windows)
         if: matrix.os == 'windows-latest'
-        run: >
-          cmake -B build
-          -G Ninja 
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_C_COMPILER=cl
-          -DCMAKE_CXX_COMPILER=cl
-          -DCMAKE_TOOLCHAIN_FILE="${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake"
+        shell: powershell
+        run: |
+          # Ensure we use the exact path to the toolchain
+          $vcpkgToolchain = "$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+          
+          # Run cmake with proper path syntax
+          cmake -B build -G Ninja `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_C_COMPILER=cl `
+            -DCMAKE_CXX_COMPILER=cl `
+            -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain"
 
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
