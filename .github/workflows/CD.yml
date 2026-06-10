@@ -96,7 +96,8 @@ jobs:
             -DCMAKE_C_COMPILER=cl `
             -DCMAKE_CXX_COMPILER=cl `
             -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
-            -DCMAKE_CXX_FLAGS="/fp:precise"
+            -DCMAKE_C_FLAGS_RELWITHDEBINFO="/Od" `
+            -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="/Od"
 
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
