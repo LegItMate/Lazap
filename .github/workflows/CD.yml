@@ -97,7 +97,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_C_COMPILER=cl `
             -DCMAKE_CXX_COMPILER=cl `
-            -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain"
+            -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
             -DCMAKE_CXX_FLAGS_RELEASE="/Od"
 
       - name: Build (Linux)
