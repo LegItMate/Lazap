@@ -79,7 +79,16 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-      
+
+      - name: Update vcpkg (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          cd $VCPKG_INSTALLATION_ROOT
+          git fetch --all
+          git checkout master
+          git pull
+
       - name: Configure (Windows)
         if: matrix.os == 'windows-latest'
         shell: powershell
