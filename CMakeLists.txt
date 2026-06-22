@@ -11,6 +11,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Static linking to avoid runtime dependencies (vcruntime)
 if(WIN32 AND MSVC)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  # Force MSVC to treat libraries as native Windows builds
+  set(LIBPSL_BUILD_STANDALONE OFF CACHE BOOL "" FORCE)
+  set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+  set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 endif()
 
 # Strip debug symbols in release
