@@ -99,6 +99,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_C_COMPILER=cl `
             -DCMAKE_CXX_COMPILER=cl `
+            -DVCPKG_TARGET_TRIPLET=x64-windows-static `
             -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain"
 
       - name: Build (Linux)
